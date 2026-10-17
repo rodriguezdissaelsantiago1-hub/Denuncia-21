@@ -1432,6 +1432,7 @@
     appId: "1:299596631728:web:f2a4914e6e3dce9b30f575",
     measurementId: "G-NDGC31QEW2"
   };
+  
 
   // Inicializar Firebase y Firestore
   const app = initializeApp(firebaseConfig);
@@ -1493,7 +1494,64 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.db) {
         escucharDenunciasEnVivo();
     }
+    
 });
+</script>
+<!-- Cargar los SDKs de Firebase desde gstatic -->
+<script type="module">
+  // Importar las funciones de Firebase y Firestore
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // Tu configuración de Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyA8GPZlZJzEWnO_KT4_MjGkZBDzU16KZ_M",
+    authDomain: "denunciaanonima21-ddc83.firebaseapp.com",
+    projectId: "denunciaanonima21-ddc83",
+    storageBucket: "denunciaanonima21-ddc83.firebasestorage.app",
+    messagingSenderId: "299596631728",
+    appId: "1:299596631728:web:f2a4914e6e3dce9b30f575",
+    measurementId: "G-NDGC31QEW2"
+  };
+
+  // Inicializar Firebase y la base de datos Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 1. FUNCIÓN PARA ENVIAR REPORTE (Conéctala a tu formulario)
+  window.enviarReporte = async function(mensajeReporte, categoria) {
+    try {
+      await addDoc(collection(db, "reportes"), {
+        mensaje: mensajeReporte,
+        categoria: categoria || "Anónimo",
+        fecha: serverTimestamp()
+      });
+      alert("¡Reporte enviado exitosamente!");
+    } catch (error) {
+      console.error("Error al enviar el reporte: ", error);
+      alert("Hubo un error al guardar el reporte.");
+    }
+  };
+
+  // 2. ESCUCHAR CAMBIOS EN TIEMPO REAL (Para verlos en otro usuario al instante)
+  const listaContenedor = document.getElementById("contenedor-reportes"); // Asegúrate de tener un div con este ID
+
+  if (listaContenedor) {
+    onSnapshot(collection(db, "reportes"), (snapshot) => {
+      listaContenedor.innerHTML = ""; // Limpiar lista anterior
+      snapshot.forEach((doc) => {
+        const reporte = doc.data();
+        const elemento = document.createElement("div");
+        elemento.className = "tarjeta-reporte";
+        elemento.innerHTML = `
+          <p><strong>Categoría:</strong> ${reporte.categoria}</p>
+          <p>${reporte.mensaje}</p>
+          <hr>
+        `;
+        listaContenedor.appendChild(elemento);
+      });
+    });
+  }
 </script>
 </body>
 </html>
