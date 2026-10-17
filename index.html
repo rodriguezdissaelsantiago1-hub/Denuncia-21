@@ -316,24 +316,56 @@
                     </div>
                 </div>
 
-                <form id="form-reporte" onsubmit="handleFormSubmit(event)" class="p-6 sm:p-8 space-y-6">
-                    
-                    <!-- Category Selection -->
-                    <div>
-                        <label class="block text-sm font-extrabold text-slate-800 mb-2">
-                            Categoría de la Incidencia <span class="text-red-500">*</span>
-                        </label>
-                        <select id="rep-categoria" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sep-guinda focus:border-sep-guinda text-sm bg-slate-50 font-medium">
-                            <option value="" disabled selected>-- Seleccione el tipo de situación --</option>
-                            <option value="Acoso, bullying o hostigamiento">Acoso, bullying o hostigamiento</option>
-                            <option value="Relacionado con el celular">Relacionado con el celular</option>
-                            <option value="Conducta indebida">Conducta indebida</option>
-                            <option value="Discriminación">Discriminación</option>
-                            <option value="Riesgo de seguridad en plantel">Riesgo de seguridad en plantel</option>
-                            <option value="Daño al inmobiliario y/o instalaciones">Daño al inmobiliario y/o instalaciones</option>
-                            <option value="Otro asunto normativo">Otro asunto normativo</option>
-                        </select>
-                    </div>
+</div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // Configuración oficial de tu proyecto
+  const firebaseConfig = {
+    apiKey: "AIzaSyA8GPZlZJzEWnO_KT4_MjGkZBDzU16KZ_M",
+    authDomain: "denunciaanonima21-ddc83.firebaseapp.com",
+    projectId: "denunciaanonima21-ddc83",
+    storageBucket: "denunciaanonima21-ddc83.firebasestorage.app",
+    messagingSenderId: "299596631728",
+    appId: "1:299596631728:web:f2a4914e6e3dce9b30f575",
+    measurementId: "G-NDGC31QEW2"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Función global para manejar el formulario
+  window.handleFormSubmit = async function(event) {
+    event.preventDefault(); // Evita que la página se recargue
+
+    // Obtener valores usando los IDs de tu HTML
+    const categoria = document.getElementById("rep-categoria").value;
+    // Si tienes otros campos (ej. descripción, lugar, etc.), léelos aquí:
+    const descripcionElem = document.getElementById("rep-descripcion"); 
+    const descripcion = descripcionElem ? descripcionElem.value : "";
+
+    // Generar un folio único para el alumno (ejemplo: AR-2026-X123)
+    const folio = "AR-2026-" + Math.random().toString(36).substring(2, 6).toUpperCase();
+
+    try {
+      // Guardar en la colección "reportes" de Firestore
+      await addDoc(collection(db, "reportes"), {
+        folio: folio,
+        categoria: categoria,
+        descripcion: descripcion,
+        estado: "En Revisión",
+        fecha: serverTimestamp()
+      });
+
+      alert(`¡Reporte enviado exitosamente!\nTu folio de seguimiento es: ${folio}`);
+      document.getElementById("form-reporte").reset();
+    } catch (error) {
+      console.error("Error al guardar en Firebase: ", error);
+      alert("Hubo un error al registrar el reporte. Por favor intenta de nuevo.");
+    }
+  };
+</script>
 
                     <!-- Urgency Level Select -->
                     <div>
