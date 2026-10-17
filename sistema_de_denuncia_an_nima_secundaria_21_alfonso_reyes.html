@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secundaria #21 Alfonso Reyes - Sistema Oficial de Denuncia Anónima</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sep: {
+                            guinda: '#691C32',
+                            guindaLight: '#982233',
+                            dorado: '#C5A059',
+                            doradoDark: '#A3803C',
+                            grisOscuro: '#2B2B2B',
+                            carmesiPulsante: '#8B0000'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Admin Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF for Official PDF Receipt Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        @keyframes pulse-carmesi {
+            0%, 100% { background-color: #8B0000; box-shadow: 0 0 15px rgba(139, 0, 0, 0.8); }
+            50% { background-color: #DC2626; box-shadow: 0 0 25px rgba(220, 38, 38, 1); }
+        }
+        .urgencia-peligro {
+            animation: pulse-carmesi 1.5s infinite;
+            color: #FFFFFF !important;
+            font-weight: bold;
+        }
+        .border-gold-glow {
+            box-shadow: 0 0 10px rgba(197, 160, 89, 0.3);
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #691C32;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 font-sans antialiased selection:bg-sep-dorado selection:text-white">
+
+     <!-- INSTITUTIONAL HEADER -->
+
+    <header class="bg-sep-guinda text-white border-b-4 border-sep-dorado shadow-lg sticky top-0 z-50">
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="flex items-center justify-between h-20 sm:h-24">
+
+               
+
+ <!-- Logo & School Identification -->
+<div class="flex items-center space-x-3 sm:space-x-4 cursor-pointer" onclick="navigateTo('inicio')">
+    <div class="bg-white p-1 rounded-lg shadow-md flex items-center justify-center shrink-0 w-12 h-12 sm:w-16 sm:h-16 border-2 border-sep-dorado">
+        
+        <!-- AQUÍ VA TU NUEVO LOGO -->
+        <img src="9e5301bd-0a90-4a4e-a557-704c89c20f60.jfif" alt="Logo Secundaria 21" class="w-full h-full object-contain">
+
+    </div>
+    <div class="leading-tight">
+        <div class="text-[10px] sm:text-xs tracking-wider text-sep-dorado font-bold uppercase">SEP • SEEBC • ISEP</div>
+        <h1 class="text-base sm:text-xl font-extrabold text-white tracking-tight">Secundaria #21 "Alfonso Reyes"</h1>
+        <p class="text-[11px] sm:text-xs text-slate-200 font-medium hidden sm:block">Baja California • Sistema Oficial de Denuncia Anónima</p>
+    </div>
+</div>
+
+                    <div class="leading-tight">
+
+                        <div class="text-[10px] sm:text-xs tracking-wider text-sep-dorado font-bold uppercase">SEP • SEEBC • ISEP</div>
+
+                        <h1 class="text-base sm:text-xl font-extrabold text-white tracking-tight">Secundaria #21 "Alfonso Reyes"</h1>
+
+                        <p class="text-[11px] sm:text-xs text-slate-200 font-medium hidden sm:block">Baja California • Sistema Oficial de Denuncia Anónima</p>
+
+                    </div>
+
+                </div>
+
+                <!-- Desktop Navigation Menu -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+                    <button onclick="navigateTo('inicio')" id="nav-inicio" class="nav-btn px-4 py-2 rounded-md font-semibold text-sm transition-colors duration-150 flex items-center space-x-2 bg-sep-guindaLight text-white border-b-2 border-sep-dorado">
+                        <i class="fa-solid fa-house text-sep-dorado"></i>
+                        <span>Inicio</span>
+                    </button>
+                    <button onclick="navigateTo('nuevo-reporte')" id="nav-nuevo-reporte" class="nav-btn px-4 py-2 rounded-md font-semibold text-sm transition-colors duration-150 flex items-center space-x-2 text-slate-200 hover:bg-sep-guindaLight hover:text-white">
+                        <i class="fa-solid fa-pen-to-square text-sep-dorado"></i>
+                        <span>Nuevo Reporte</span>
+                    </button>
+                    <button onclick="navigateTo('consulta-estado')" id="nav-consulta-estado" class="nav-btn px-4 py-2 rounded-md font-semibold text-sm transition-colors duration-150 flex items-center space-x-2 text-slate-200 hover:bg-sep-guindaLight hover:text-white">
+                        <i class="fa-solid fa-magnifying-glass text-sep-dorado"></i>
+                        <span>Consulta Estado</span>
+                    </button>
+                    <button onclick="navigateTo('panel-admin')" id="nav-panel-admin" class="nav-btn px-3 py-2 rounded-md font-semibold text-sm bg-slate-900 text-sep-dorado border border-sep-dorado/40 hover:bg-black transition-colors duration-150 flex items-center space-x-2 shadow">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span>Panel Admin</span>
+                    </button>
+                </nav>
+
+                <!-- Mobile Hamburger Button -->
+                <div class="flex md:hidden items-center space-x-2">
+                    <button onclick="navigateTo('panel-admin')" class="px-2.5 py-1.5 rounded text-xs font-bold bg-slate-900 text-sep-dorado border border-sep-dorado">
+                        <i class="fa-solid fa-lock"></i> Admin
+                    </button>
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2 rounded-md text-slate-200 hover:text-white hover:bg-sep-guindaLight focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-sep-guinda border-t border-sep-guindaLight px-4 pt-2 pb-4 space-y-2">
+            <button onclick="navigateTo('inicio'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-md text-base font-semibold text-white bg-sep-guindaLight flex items-center space-x-3">
+                <i class="fa-solid fa-house text-sep-dorado w-5"></i><span>Inicio</span>
+            </button>
+            <button onclick="navigateTo('nuevo-reporte'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-md text-base font-semibold text-slate-200 hover:bg-sep-guindaLight flex items-center space-x-3">
+                <i class="fa-solid fa-pen-to-square text-sep-dorado w-5"></i><span>Nuevo Reporte</span>
+            </button>
+            <button onclick="navigateTo('consulta-estado'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-md text-base font-semibold text-slate-200 hover:bg-sep-guindaLight flex items-center space-x-3">
+                <i class="fa-solid fa-magnifying-glass text-sep-dorado w-5"></i><span>Consulta Estado</span>
+            </button>
+            <button onclick="navigateTo('panel-admin'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-md text-base font-semibold text-sep-dorado bg-slate-900 flex items-center space-x-3 border border-sep-dorado/50">
+                <i class="fa-solid fa-user-shield w-5"></i><span>Panel Directivo Admin</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+        <!-- SECTION 1: INICIO -->
+        <section id="sec-inicio" class="page-section space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative rounded-2xl bg-gradient-to-br from-sep-guinda via-sep-guindaLight to-slate-900 text-white p-6 sm:p-10 shadow-xl overflow-hidden border-2 border-sep-dorado">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-white">
+                    <i class="fa-solid fa-shield-halved text-[240px]"></i>
+                </div>
+                <div class="relative z-10 max-w-3xl space-y-4">
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-sep-dorado text-slate-900 tracking-wider uppercase">
+                        Plataforma Oficial Anónima • SEP - SEEBC - ISEP
+                    </span>
+                    <h2 class="text-2xl sm:text-4xl font-black text-white leading-tight">
+                        Tu voz cuenta en la Secundaria #21 "Alfonso Reyes"
+                    </h2>
+                    <p class="text-slate-200 text-sm sm:text-base leading-relaxed">
+                        Este buzón digital garantiza la recepción confidencial y segura de incidencias escolares. <strong class="text-sep-dorado">No es necesario ingresar datos personales</strong> como nombre, matrícula ni grupo. Tu reporte ayuda a mantener un plantel libre de violencia y seguro para todos.
+                    </p>
+                    
+                    <div class="pt-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <button onclick="navigateTo('nuevo-reporte')" class="px-6 py-3.5 rounded-xl bg-sep-dorado hover:bg-sep-doradoDark text-slate-950 font-bold text-sm sm:text-base shadow-lg hover:shadow-xl transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-plus-circle text-lg"></i>
+                            <span>Crear Nuevo Reporte</span>
+                        </button>
+                        <button onclick="navigateTo('consulta-estado')" class="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/30 font-bold text-sm sm:text-base transition flex items-center justify-center space-x-2 backdrop-blur-sm">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span>Consultar Estado de Reporte</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency & Support Lines Grid -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2 border-b border-slate-100 pb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-sep-guinda flex items-center gap-2">
+                            <i class="fa-solid fa-phone-volume text-sep-dorado"></i>
+                            Atención Inmediata y Líneas de Emergencia
+                        </h3>
+                        <p class="text-xs text-slate-500">Contactos oficiales gubernamentales y de apoyo psicológico institucional</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-md text-xs font-bold bg-red-100 text-red-700 animate-pulse">
+                        <i class="fa-solid fa-circle text-[8px] mr-1"></i> Líneas Activas 24/7
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- 911 Emergency -->
+                    <div class="p-4 rounded-xl border border-red-200 bg-red-50/50 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-red-600 uppercase tracking-wide">Emergencia Vital</span>
+                                <i class="fa-solid fa-kit-medical text-red-500"></i>
+                            </div>
+                            <div class="text-2xl font-black text-slate-900 mt-1">911</div>
+                            <p class="text-xs text-slate-600 mt-1">Atención inmediata a urgencias médicas, seguridad y bomberos.</p>
+                        </div>
+                        <button onclick="copyToClipboard('911', 'Número 911 copiado')" class="w-full py-2 bg-white border border-red-300 hover:bg-red-50 text-red-700 rounded-lg font-bold text-xs flex items-center justify-center gap-2 transition">
+                            <i class="fa-regular fa-copy"></i> Copiar Número
+                        </button>
+                    </div>
+
+                    <!-- 088 Citizen Attention -->
+                    <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/50 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-blue-600 uppercase tracking-wide">Guardia Nacional</span>
+                                <i class="fa-solid fa-building-columns text-blue-500"></i>
+                            </div>
+                            <div class="text-2xl font-black text-slate-900 mt-1">088</div>
+                            <p class="text-xs text-slate-600 mt-1">Atención ciudadana, operativos preventivos y orientación social.</p>
+                        </div>
+                        <button onclick="copyToClipboard('088', 'Número 088 copiado')" class="w-full py-2 bg-white border border-blue-300 hover:bg-blue-50 text-blue-700 rounded-lg font-bold text-xs flex items-center justify-center gap-2 transition">
+                            <i class="fa-regular fa-copy"></i> Copiar Número
+                        </button>
+                    </div>
+
+                    <!-- 089 Anonymous Complaint -->
+                    <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/50 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-amber-700 uppercase tracking-wide">Denuncia Estatal</span>
+                                <i class="fa-solid fa-user-ninja text-amber-600"></i>
+                            </div>
+                            <div class="text-2xl font-black text-slate-900 mt-1">089</div>
+                            <p class="text-xs text-slate-600 mt-1">Denuncia anónima para delitos de investigación estatal/federal.</p>
+                        </div>
+                        <button onclick="copyToClipboard('089', 'Número 089 copiado')" class="w-full py-2 bg-white border border-amber-300 hover:bg-amber-50 text-amber-800 rounded-lg font-bold text-xs flex items-center justify-center gap-2 transition">
+                            <i class="fa-regular fa-copy"></i> Copiar Número
+                        </button>
+                    </div>
+
+                    <!-- Psychological Support Line (Interactive Modal Opener) -->
+                    <div class="p-4 rounded-xl border border-purple-200 bg-purple-50/50 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-purple-700 uppercase tracking-wide">Apoyo Emocional</span>
+                                <i class="fa-solid fa-heart-pulse text-purple-600"></i>
+                            </div>
+                            <div class="text-lg font-bold text-slate-900 mt-1">Línea de Apoyo Psicológico</div>
+                            <p class="text-xs text-slate-600 mt-1">Orientación emocional y contención psicológica gratuita.</p>
+                        </div>
+                        <button onclick="openPsychologicalModal()" class="w-full py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-lg font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm">
+                            <i class="fa-solid fa-headset"></i> Elegir Línea de Apoyo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frequently Asked Questions (FAQ) Section -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 space-y-4">
+                <h3 class="text-xl font-bold text-sep-guinda flex items-center gap-2 border-b border-slate-100 pb-3">
+                    <i class="fa-solid fa-circle-question text-sep-dorado"></i>
+                    Preguntas Frecuentes sobre el Proceso
+                </h3>
+
+                <div class="space-y-3">
+                    <details class="group border border-slate-200 rounded-xl p-4 [&_summary::-webkit-details-marker]:hidden bg-slate-50/50">
+                        <summary class="flex items-center justify-between cursor-pointer font-bold text-slate-800 text-sm sm:text-base">
+                            <span>¿Es realmente 100% anónimo mi reporte?</span>
+                            <span class="transition group-open:rotate-180 text-sep-guinda"><i class="fa-solid fa-chevron-down"></i></span>
+                        </summary>
+                        <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                            Sí. El sistema no solicita nombres, correos personales, CURP ni datos de matrícula. Únicamente se genera un <strong>Folio Único</strong> y un <strong>PIN Personal</strong> elegido por ti para consultar el avance.
+                        </p>
+                    </details>
+
+                    <details class="group border border-slate-200 rounded-xl p-4 [&_summary::-webkit-details-marker]:hidden bg-slate-50/50">
+                        <summary class="flex items-center justify-between cursor-pointer font-bold text-slate-800 text-sm sm:text-base">
+                            <span>¿Quién recibe y da seguimiento a los reportes?</span>
+                            <span class="transition group-open:rotate-180 text-sep-guinda"><i class="fa-solid fa-chevron-down"></i></span>
+                        </summary>
+                        <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                            Los reportes ingresan directamente al Panel Institucional del Plantel, donde las autoridades directivas competentes revisan el caso y aplican los protocolos oficiales marcados por la Secretaría de Educación Pública y la Secretaría de Educación del Estado de Baja California.
+                        </p>
+                    </details>
+
+                    <details class="group border border-slate-200 rounded-xl p-4 [&_summary::-webkit-details-marker]:hidden bg-slate-50/50">
+                        <summary class="flex items-center justify-between cursor-pointer font-bold text-slate-800 text-sm sm:text-base">
+                            <span>¿Qué sucede si pierdo mi PIN o Folio?</span>
+                            <span class="transition group-open:rotate-180 text-sep-guinda"><i class="fa-solid fa-chevron-down"></i></span>
+                        </summary>
+                        <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                            Debido al estricto protocolo de anonimato, el sistema no almacena relaciones entre usuarios y folios. Te recomendamos descargar el <strong>Comprobante Oficial en PDF</strong> al finalizar tu registro o tomar una captura de pantalla de tus claves.
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: NUEVO REPORTE -->
+        <section id="sec-nuevo-reporte" class="page-section hidden max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                <!-- Form Header -->
+                <div class="bg-gradient-to-r from-sep-guinda to-sep-guindaLight text-white p-6 sm:p-8 border-b-4 border-sep-dorado">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-sep-dorado text-slate-950 p-3 rounded-xl font-black text-xl">
+                            <i class="fa-solid fa-shield-cat"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-extrabold">Formulario Oficial de Incidencia Anónima</h2>
+                            <p class="text-xs sm:text-sm text-slate-200 mt-1">Proporcione los detalles del evento con la mayor precisión posible.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="form-reporte" onsubmit="handleFormSubmit(event)" class="p-6 sm:p-8 space-y-6">
+                    
+                    <!-- Category Selection -->
+                    <div>
+                        <label class="block text-sm font-extrabold text-slate-800 mb-2">
+                            Categoría de la Incidencia <span class="text-red-500">*</span>
+                        </label>
+                        <select id="rep-categoria" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sep-guinda focus:border-sep-guinda text-sm bg-slate-50 font-medium">
+                            <option value="" disabled selected>-- Seleccione el tipo de situación --</option>
+                            <option value="Acoso, bullying o hostigamiento">Acoso, bullying o hostigamiento</option>
+                            <option value="Relacionado con el celular">Relacionado con el celular</option>
+                            <option value="Conducta indebida">Conducta indebida</option>
+                            <option value="Discriminación">Discriminación</option>
+                            <option value="Riesgo de seguridad en plantel">Riesgo de seguridad en plantel</option>
+                            <option value="Daño al inmobiliario y/o instalaciones">Daño al inmobiliario y/o instalaciones</option>
+                            <option value="Otro asunto normativo">Otro asunto normativo</option>
+                        </select>
+                    </div>
+
+                    <!-- Urgency Level Select -->
+                    <div>
+                        <label class="block text-sm font-extrabold text-slate-800 mb-2">
+                            Nivel de Urgencia / Gravedad <span class="text-red-500">*</span>
+                        </label>
+                        <select id="rep-urgencia" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sep-guinda focus:border-sep-guinda text-sm bg-slate-50 font-medium">
+                            <option value="" disabled selected>-- Seleccione la urgencia --</option>
+                            <option value="Baja">Baja</option>
+                            <option value="Media">Media</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Urgente">Urgente</option>
+                            <option value="Peligro Inminente">Peligro Inminente</option>
+                        </select>
+                    </div>
+
+                    <!-- Location and Date Inputs -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-extrabold text-slate-800 mb-2">
+                                Ubicación Exacta de los Hechos <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="rep-ubicacion" required placeholder="Ej. Canchas, Edificio B alto, Sanitarios 2do piso..." class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sep-guinda text-sm bg-slate-50 font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-extrabold text-slate-800 mb-2">
+                                Fecha aproximada de los hechos <span class="text-red-500">*</span>
+                            </label>
+                            <input type="date" id="rep-fecha" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sep-guinda text-sm bg-slate-50 font-medium">
+                        </div>
+                    </div>
+
+                    <!-- Detailed Description -->
+                    <div>
+                        <label class="block text-sm font-extrabold text-slate-800 mb-2">
+                            Descripción Detallada de los Hechos <span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="rep-descripcion" rows="4" required placeholder="Escriba objetivamente qué sucedió, personas involucradas (sin revelar datos que rompan su anonimato) y detalles relevantes..." class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sep-guinda text-sm bg-slate-50"></textarea>
+                    </div>
+
+                    <!-- Optional Evidence Upload -->
+                    <div class="p-4 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50">
+                        <label class="block text-sm font-extrabold text-slate-800 mb-1">
+                            <i class="fa-solid fa-paperclip text-sep-dorado mr-1"></i> Evidencia Fotográfica o Documental (Opcional)
+                        </label>
+                        <p class="text-xs text-slate-500 mb-3">Adjunte imágenes o documentos en formato JPG, PNG o PDF (Máx. 5MB).</p>
+                        <input type="file" id="rep-archivo" accept="image/*,.pdf" onchange="handleFilePreview(this)" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-sep-guinda file:text-white hover:file:bg-sep-guindaLight cursor-pointer">
+                        <div id="file-preview-container" class="mt-3 hidden items-center space-x-3 bg-white p-2 rounded-lg border border-slate-200">
+                            <i class="fa-solid fa-file-circle-check text-green-600 text-lg"></i>
+                            <span id="file-preview-name" class="text-xs font-semibold text-slate-700 truncate"></span>
+                        </div>
+                    </div>
+
+                    <!-- PIN Creation -->
+                    <div class="bg-amber-50/80 border border-amber-200 p-4 rounded-xl space-y-3">
+                        <div>
+                            <label class="block text-sm font-extrabold text-slate-900">
+                                Clave / PIN Personal de Seguimiento <span class="text-red-500">*</span>
+                            </label>
+                            <p class="text-xs text-slate-600 mb-2">Cree una clave confidencial (entre 6 y 10 caracteres). La usará junto con su Folio para ver el avance.</p>
+                            <input type="password" id="rep-pin" minlength="6" maxlength="10" required placeholder="Ejemplo: MiClave21" class="w-full sm:w-1/2 px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-bold tracking-widest bg-white focus:ring-2 focus:ring-sep-guinda">
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-200">
+                        <button type="button" onclick="navigateTo('inicio')" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-bold text-sm hover:bg-slate-100 transition">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-7 py-3 rounded-xl bg-sep-guinda hover:bg-sep-guindaLight text-white font-extrabold text-sm shadow-lg hover:shadow-xl transition flex items-center space-x-2">
+                            <i class="fa-solid fa-paper-plane text-sep-dorado"></i>
+                            <span>Enviar Denuncia Anónima</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- REPORT CREATED SUCCESS VIEW / MODAL OVERLAY -->
+        <div id="modal-exito-reporte" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border-2 border-sep-dorado space-y-6 animate-bounce-short">
+                <div class="text-center space-y-2">
+                    <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-3xl font-black">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-slate-900">¡Reporte Registrado con Éxito!</h3>
+                    <p class="text-xs text-slate-500">Guarde los siguientes datos para dar seguimiento institucional a su expediente.</p>
+                </div>
+
+                <div class="bg-slate-50 border-2 border-slate-200 p-4 rounded-xl space-y-3">
+                    <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Folio Único:</span>
+                        <span id="created-folio" class="text-lg font-black text-sep-guinda tracking-wider"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-500 uppercase">PIN de Acceso:</span>
+                        <span id="created-pin" class="text-sm font-mono font-bold text-slate-800"></span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button onclick="copyFolioAndPin()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-bold text-xs flex items-center justify-center gap-2 border border-slate-300">
+                        <i class="fa-regular fa-copy"></i> Copiar Claves
+                    </button>
+                    <button onclick="generateOfficialPDF()" class="w-full py-2.5 bg-sep-dorado hover:bg-sep-doradoDark text-slate-950 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow">
+                        <i class="fa-solid fa-file-pdf"></i> Descargar Acuse PDF
+                    </button>
+                </div>
+
+                <button onclick="closeSuccessModalAndNavigate()" class="w-full py-3 bg-sep-guinda hover:bg-sep-guindaLight text-white rounded-xl font-extrabold text-sm shadow">
+                    Ir a Consulta de Estado
+                </button>
+            </div>
+        </div>
+
+        <!-- SECTION 3: CONSULTA ESTADO -->
+        <section id="sec-consulta-estado" class="page-section hidden max-w-3xl mx-auto space-y-6">
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-xl sm:text-2xl font-black text-sep-guinda flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass text-sep-dorado"></i>
+                        Consulta de Estado de Reporte
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Ingrese su Folio Oficial y PIN Personal para verificar los avances.</p>
+                </div>
+
+                <form onsubmit="handleStatusLookup(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Folio Único</label>
+                        <input type="text" id="lookup-folio" required placeholder="Ej: AR-2026-X89" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm font-mono uppercase focus:ring-2 focus:ring-sep-guinda">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">PIN Personal</label>
+                        <input type="password" id="lookup-pin" required placeholder="Su clave creada" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-sep-guinda">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full py-2.5 bg-sep-guinda hover:bg-sep-guindaLight text-white font-extrabold rounded-xl text-sm transition shadow flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-search"></i> Consultar
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Status Lookup Results Display -->
+                <div id="lookup-result-box" class="hidden pt-6 border-t border-slate-200 space-y-6">
+                    
+                    <!-- Incident Header Summary -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between gap-2">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase text-slate-500 tracking-wider">Categoría del reporte</span>
+                            <div id="res-categoria" class="text-base font-extrabold text-slate-900"></div>
+                        </div>
+                        <div class="text-right sm:text-right">
+                            <span class="text-[10px] font-bold uppercase text-slate-500 tracking-wider">Fecha de registro</span>
+                            <div id="res-fecha" class="text-xs font-bold text-slate-800"></div>
+                            <span id="res-urgencia-badge" class="inline-block mt-1 px-2.5 py-0.5 rounded text-[10px] font-black uppercase"></span>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Progress Visual Bar -->
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Línea del Tiempo de Atención Institucional</h4>
+                        
+                        <div class="relative flex items-center justify-between py-2 px-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <!-- Background line -->
+                            <div class="absolute left-10 right-10 top-1/2 h-1 bg-slate-200 -translate-y-1/2 z-0"></div>
+                            <div id="timeline-progress-bar" class="absolute left-10 top-1/2 h-1 bg-sep-guinda -translate-y-1/2 z-0 transition-all duration-500 w-0"></div>
+
+                            <!-- Step 1: Enviado -->
+                            <div class="relative z-10 flex flex-col items-center">
+                                <div id="step-1-icon" class="w-9 h-9 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs border-2 border-white shadow">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-600 mt-1">Enviado</span>
+                            </div>
+
+                            <!-- Step 2: En Revisión -->
+                            <div class="relative z-10 flex flex-col items-center">
+                                <div id="step-2-icon" class="w-9 h-9 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs border-2 border-white shadow">
+                                    <i class="fa-solid fa-glasses"></i>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-600 mt-1">En Revisión</span>
+                            </div>
+
+                            <!-- Step 3: Observando / Seguimiento -->
+                            <div class="relative z-10 flex flex-col items-center">
+                                <div id="step-3-icon" class="w-9 h-9 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs border-2 border-white shadow">
+                                    <i class="fa-solid fa-eye"></i>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-600 mt-1">En Seguimiento</span>
+                            </div>
+
+                            <!-- Step 4: Concluido -->
+                            <div class="relative z-10 flex flex-col items-center">
+                                <div id="step-4-icon" class="w-9 h-9 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs border-2 border-white shadow">
+                                    <i class="fa-solid fa-flag-checkered"></i>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-600 mt-1">Concluido</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Directorial Response / Log Notes -->
+                    <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-4 space-y-2">
+                        <div class="flex items-center space-x-2 text-blue-900 font-bold text-xs">
+                            <i class="fa-solid fa-circle-info text-blue-600"></i>
+                            <span>Observaciones Oficiales Dirección</span>
+                        </div>
+                        <p id="res-observaciones" class="text-xs text-slate-700 leading-relaxed italic">
+                            Sin observaciones registradas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: PANEL ADMIN -->
+        <section id="sec-panel-admin" class="page-section hidden space-y-6">
+            
+            <!-- Admin Login Lock Screen -->
+            <div id="admin-auth-card" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-6">
+                <div class="text-center space-y-2">
+                    <div class="w-14 h-14 bg-sep-guinda text-sep-dorado rounded-full flex items-center justify-center mx-auto text-2xl shadow-md">
+                        <i class="fa-solid fa-user-lock"></i>
+                    </div>
+                    <h2 class="text-xl font-black text-slate-900">Acceso Directivo Privado</h2>
+                    <p class="text-xs text-slate-500">Ingrese la clave de autorización directiva del plantel.</p>
+                </div>
+
+                <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Clave de Acceso</label>
+                        <input type="password" id="admin-password-input" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-sep-guinda">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-sep-guinda hover:bg-sep-guindaLight text-white font-extrabold rounded-xl text-sm shadow transition">
+                        Ingresar al Panel
+                    </button>
+                </form>
+            </div>
+
+            <!-- Dashboard Content (Hidden until authenticated) -->
+            <div id="admin-dashboard-content" class="hidden space-y-6">
+                
+                <!-- Admin Header & Alert Counter -->
+                <div class="bg-slate-900 text-white rounded-2xl p-6 border-2 border-sep-dorado shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-extrabold uppercase bg-sep-dorado text-slate-950">
+                            Dirección de Seguridad Escolar
+                        </span>
+                        <h2 class="text-2xl font-black text-white mt-1">Panel de Control y Seguimiento</h2>
+                        <p class="text-xs text-slate-400">Escuela Secundaria #21 "Alfonso Reyes"</p>
+                    </div>
+
+                    <div class="flex items-center space-x-3 w-full md:w-auto justify-between md:justify-end">
+                        <div id="badge-urgentes-count" class="hidden px-3 py-1.5 rounded-lg bg-red-600 text-white font-black text-xs animate-pulse flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span id="txt-urgentes-count">0 URGENTES</span>
+                        </div>
+                        <button onclick="handleAdminLogout()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-bold text-xs border border-slate-700 transition">
+                            <i class="fa-solid fa-right-from-bracket mr-1"></i> Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ANALYTICS / STATS DASHBOARD MODULE -->
+                <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-sep-guinda flex items-center gap-2 border-b border-slate-100 pb-3">
+                        <i class="fa-solid fa-chart-pie text-sep-dorado"></i>
+                        Estadísticas y Analítica de Incidencias del Plantel
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Chart 1: Status Distribution -->
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col items-center">
+                            <h4 class="text-xs font-bold text-slate-700 uppercase mb-3">Distribución por Estado</h4>
+                            <div class="w-full max-w-[200px] h-[180px]">
+                                <canvas id="chartStatus"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Chart 2: Incident Categories -->
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col items-center">
+                            <h4 class="text-xs font-bold text-slate-700 uppercase mb-3">Incidencias Frecuentes</h4>
+                            <div class="w-full max-w-[200px] h-[180px]">
+                                <canvas id="chartCategory"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Quick Summary Stats -->
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col justify-between space-y-3">
+                            <h4 class="text-xs font-bold text-slate-700 uppercase">Resumen Global</h4>
+                            
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="bg-white p-3 rounded-lg border border-slate-200 text-center">
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase block">Total Casos</span>
+                                    <span id="stat-total" class="text-xl font-black text-slate-900">0</span>
+                                </div>
+                                <div class="bg-white p-3 rounded-lg border border-slate-200 text-center">
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase block">% Atendido</span>
+                                    <span id="stat-porcentaje" class="text-xl font-black text-green-600">0%</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-amber-50 p-3 rounded-lg border border-amber-200 text-xs text-amber-800 leading-tight">
+                                <i class="fa-solid fa-lightbulb text-amber-600 mr-1"></i>
+                                Los datos estadísticos ayudan a priorizar talleres preventivos y reforzar la vigilancia en zonas específicas.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADMIN TABS -->
+                <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 space-y-6">
+                    <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
+                        <button onclick="switchAdminTab('En revisión')" id="tab-En-revisión" class="admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-2 bg-sep-guinda text-white shadow">
+                            <i class="fa-solid fa-clock"></i> En Revisión
+                            <span id="badge-count-revision" class="px-2 py-0.5 rounded-full text-[10px] bg-white text-sep-guinda">0</span>
+                        </button>
+                        <button onclick="switchAdminTab('Observando')" id="tab-Observando" class="admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-2 text-slate-600 hover:bg-slate-100">
+                            <i class="fa-solid fa-eye"></i> Observando / Seguimiento
+                            <span id="badge-count-observando" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-700">0</span>
+                        </button>
+                        <button onclick="switchAdminTab('Atendido')" id="tab-Atendido" class="admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-2 text-slate-600 hover:bg-slate-100">
+                            <i class="fa-solid fa-check-circle"></i> Atendido / Resuelto
+                            <span id="badge-count-atendido" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-700">0</span>
+                        </button>
+                        <button onclick="switchAdminTab('Desestimado')" id="tab-Desestimado" class="admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-2 text-slate-600 hover:bg-slate-100">
+                            <i class="fa-solid fa-ban"></i> Desestimado
+                            <span id="badge-count-desestimado" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-700">0</span>
+                        </button>
+                    </div>
+
+                    <!-- Cases Table List -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-200 text-[11px] font-black uppercase text-slate-500 bg-slate-50">
+                                    <th class="p-3">Folio / Fecha</th>
+                                    <th class="p-3">Categoría</th>
+                                    <th class="p-3">Gravedad</th>
+                                    <th class="p-3">Evidencia</th>
+                                    <th class="p-3 text-right">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-reports-tbody" class="divide-y divide-slate-100 text-xs font-medium">
+                                <!-- Dynamic Rows inserted via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PSYCHOLOGICAL SUPPORT MODAL -->
+    <div id="modal-psicologico" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border-2 border-sep-dorado space-y-5">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-black text-purple-900 flex items-center gap-2">
+                    <i class="fa-solid fa-heart-pulse text-purple-600"></i>
+                    Líneas de Apoyo Psicológico
+                </h3>
+                <button onclick="closePsychologicalModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-600">
+                Si te encuentras pasando por una situación de angustia o necesitas contención emocional inmediata, puedes contactar libremente a cualquiera de estas dos líneas gratuitas:
+            </p>
+
+            <div class="space-y-3">
+                <!-- Line 073 -->
+                <div class="p-3.5 bg-purple-50 rounded-xl border border-purple-200 flex justify-between items-center">
+                    <div>
+                        <span class="text-[10px] font-bold text-purple-700 uppercase">Línea Estatal BC</span>
+                        <div class="text-lg font-black text-slate-900">073</div>
+                        <p class="text-[11px] text-slate-500">Atención en Salud Mental</p>
+                    </div>
+                    <button onclick="copyToClipboard('073', 'Línea 073 copiada')" class="px-3 py-1.5 bg-purple-700 hover:bg-purple-800 text-white rounded-lg font-bold text-xs transition">
+                        <i class="fa-regular fa-copy mr-1"></i> Copiar
+                    </button>
+                </div>
+
+                <!-- Line 664-684-2604 -->
+                <div class="p-3.5 bg-purple-50 rounded-xl border border-purple-200 flex justify-between items-center">
+                    <div>
+                        <span class="text-[10px] font-bold text-purple-700 uppercase">Línea de Apoyo Directo</span>
+                        <div class="text-base font-black text-slate-900">664-684-2604</div>
+                        <p class="text-[11px] text-slate-500">Orientación Integral Tijuana/BC</p>
+                    </div>
+                    <button onclick="copyToClipboard('664-684-2604', 'Línea 664-684-2604 copiada')" class="px-3 py-1.5 bg-purple-700 hover:bg-purple-800 text-white rounded-lg font-bold text-xs transition">
+                        <i class="fa-regular fa-copy mr-1"></i> Copiar
+                    </button>
+                </div>
+            </div>
+
+            <button onclick="closePsychologicalModal()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
+    <!-- ADMIN CASE DETAIL & UPDATE MODAL -->
+    <div id="modal-admin-detail" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border-2 border-sep-dorado space-y-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <div>
+                    <span id="detail-folio-badge" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-sep-guinda text-white"></span>
+                    <h3 id="detail-categoria" class="text-lg font-black text-slate-900 mt-1"></h3>
+                </div>
+                <button onclick="closeAdminDetailModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Details Body -->
+            <div class="space-y-4 text-xs">
+                <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <div>
+                        <span class="font-bold text-slate-500 block uppercase">Fecha de Hechos</span>
+                        <span id="detail-fecha" class="font-bold text-slate-800"></span>
+                    </div>
+                    <div>
+                        <span class="font-bold text-slate-500 block uppercase">Ubicación</span>
+                        <span id="detail-ubicacion" class="font-bold text-slate-800"></span>
+                    </div>
+                    <div>
+                        <span class="font-bold text-slate-500 block uppercase">Urgencia</span>
+                        <span id="detail-urgencia" class="font-bold"></span>
+                    </div>
+                    <div>
+                        <span class="font-bold text-slate-500 block uppercase">Estado Actual</span>
+                        <span id="detail-estado" class="font-bold text-sep-guinda"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="font-extrabold text-slate-800 block mb-1 uppercase">Descripción de los hechos:</span>
+                    <p id="detail-descripcion" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700 leading-relaxed whitespace-pre-line"></p>
+                </div>
+
+                <!-- Evidence Preview Container -->
+                <div id="detail-evidencia-container" class="hidden border border-slate-200 p-3 rounded-xl bg-slate-50">
+                    <span class="font-bold text-slate-800 block mb-2"><i class="fa-solid fa-paperclip"></i> Evidencia Adjunta:</span>
+                    <div id="detail-evidencia-content"></div>
+                </div>
+
+                <!-- Form to Update Case Status & Add Directive Log -->
+                <form onsubmit="handleSaveCaseStatus(event)" class="bg-amber-50/70 p-4 rounded-xl border border-amber-200 space-y-3 pt-4">
+                    <h4 class="font-extrabold text-amber-900 text-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-pen"></i> Actualizar Estado y Bitácora Directiva
+                    </h4>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Nuevo Estado <span class="text-red-500">*</span></label>
+                            <select id="edit-estado-select" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold bg-white focus:ring-2 focus:ring-sep-guinda">
+                                <option value="En revisión">En revisión</option>
+                                <option value="Observando">Observando / Seguimiento</option>
+                                <option value="Atendido">Atendido / Resuelto</option>
+                                <option value="Desestimado">Desestimado</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Nombre del Directivo / Personal que Atiende <span class="text-red-500">*</span></label>
+                            <input type="text" id="edit-directivo-nombre" required placeholder="Ej. Profr. M. Hernández" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold bg-white focus:ring-2 focus:ring-sep-guinda">
+                            <span class="text-[10px] text-slate-500 block mt-0.5">*Guardado sólo para bitácora interna, privado para el alumno.</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Observaciones / Indicaciones para el Alumno</label>
+                        <textarea id="edit-observaciones" rows="3" placeholder="Mensaje visible para el alumno al consultar con su Folio y PIN..." class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white"></textarea>
+                    </div>
+
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="closeAdminDetailModal()" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 font-bold">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-5 py-2 rounded-lg bg-sep-guinda hover:bg-sep-guindaLight text-white font-extrabold shadow">
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <script>
+        /* IN-MEMORY DATA STORAGE INITIALIZATION */
+        let reportesData = [
+            {
+                folio: "AR-2026-X89",
+                pin: "123456",
+                categoria: "Acoso, bullying o hostigamiento",
+                urgencia: "Alta",
+                ubicacion: "Patio central cerca de la cooperativa",
+                fecha: "2026-10-10",
+                descripcion: "Grupos de alumnos molestan e impiden el paso a compañeros durante el receso escolar.",
+                evidencia: null,
+                estado: "En revisión",
+                directivoAtiende: "",
+                observaciones: "El reporte fue recibido por la Dirección Escolar. Se asignará guardia docente preventiva en la zona señalada.",
+                fechaCreacion: "2026-10-10 10:15"
+            },
+            {
+                folio: "AR-2026-M42",
+                pin: "654321",
+                categoria: "Daño al inmobiliario y/o instalaciones",
+                urgencia: "Baja",
+                ubicacion: "Sanitario de varones, primer piso",
+                fecha: "2026-10-12",
+                descripcion: "Un contenedor de basura de plástico fue fracturado en el sanitario del primer piso.",
+                evidencia: null,
+                estado: "Atendido",
+                directivoAtiende: "Subdirección Académica",
+                observaciones: "Se repuso el contenedor dañado y el personal de mantenimiento dio por concluida la incidencia.",
+                fechaCreacion: "2026-10-12 11:30"
+            }
+        ];
+
+        let currentActiveAdminTab = "En revisión";
+        let currentEditingFolio = null;
+        let lastCreatedReport = null;
+        let chartStatusInstance = null;
+        let chartCategoryInstance = null;
+
+        /* INITIALIZATION ON DOM LOAD */
+        window.addEventListener('DOMContentLoaded', () => {
+            // Set max date limit for form input
+            const todayStr = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('rep-fecha');
+            if (dateInput) dateInput.max = todayStr;
+
+            updateAdminBadgesAndAlerts();
+        });
+
+        /* NAVIGATION CONTROL */
+        function navigateTo(sectionId) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
+            
+            const target = document.getElementById(`sec-${sectionId}`);
+            if (target) {
+                target.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Highlight Active Desktop Nav Link
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-sep-guindaLight', 'text-white', 'border-b-2', 'border-sep-dorado');
+                btn.classList.add('text-slate-200');
+            });
+            const activeBtn = document.getElementById(`nav-${sectionId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-sep-guindaLight', 'text-white', 'border-b-2', 'border-sep-dorado');
+                activeBtn.classList.remove('text-slate-200');
+            }
+
+            if (sectionId === 'panel-admin' && !document.getElementById('admin-dashboard-content').classList.contains('hidden')) {
+                renderAdminReportsTable();
+                renderAnalyticsCharts();
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        /* CLIPBOARD COPY HELPER */
+        function copyToClipboard(text, successMsg) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast(successMsg || 'Copiado al portapapeles', 'success');
+        }
+
+        /* TOAST NOTIFICATION SYSTEM */
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto px-4 py-3 rounded-xl shadow-xl text-xs font-bold text-white flex items-center space-x-2 transition-all duration-300 transform translate-y-2 ${
+                type === 'success' ? 'bg-green-700' : type === 'error' ? 'bg-red-700' : 'bg-slate-900 border border-sep-dorado'
+            }`;
+            toast.innerHTML = `<i class="${type === 'success' ? 'fa-solid fa-check-circle' : type === 'error' ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-bell'} text-sep-dorado text-sm"></i><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        /* PSYCHOLOGICAL SUPPORT MODAL CONTROL */
+        function openPsychologicalModal() {
+            document.getElementById('modal-psicologico').classList.remove('hidden');
+        }
+        function closePsychologicalModal() {
+            document.getElementById('modal-psicologico').classList.add('hidden');
+        }
+
+        /* FILE PREVIEW HANDLER */
+        function handleFilePreview(input) {
+            const previewContainer = document.getElementById('file-preview-container');
+            const previewName = document.getElementById('file-preview-name');
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('El archivo supera el límite de 5MB', 'error');
+                    input.value = '';
+                    previewContainer.classList.add('hidden');
+                    return;
+                }
+                previewName.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                previewContainer.classList.remove('hidden');
+                previewContainer.classList.add('flex');
+            } else {
+                previewContainer.classList.add('hidden');
+            }
+        }
+
+        /* FORM SUBMISSION - NEW REPORT */
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const categoria = document.getElementById('rep-categoria').value;
+            const urgencia = document.getElementById('rep-urgencia').value;
+            const ubicacion = document.getElementById('rep-ubicacion').value.trim();
+            const fecha = document.getElementById('rep-fecha').value;
+            const descripcion = document.getElementById('rep-descripcion').value.trim();
+            const pin = document.getElementById('rep-pin').value.trim();
+            const fileInput = document.getElementById('rep-archivo');
+
+            if (!urgencia) {
+                showToast('Por favor seleccione un nivel de urgencia', 'error');
+                return;
+            }
+
+            // Generate unique Folio: AR-2026-XXX
+            const randomCode = Math.random().toString(36).substring(2, 5).toUpperCase();
+            const folio = `AR-2026-${randomCode}`;
+
+            let evidenciaData = null;
+            if (fileInput.files && fileInput.files[0]) {
+                evidenciaData = {
+                    name: fileInput.files[0].name,
+                    type: fileInput.files[0].type
+                };
+            }
+
+            const now = new Date();
+            const fechaCreacion = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+            const newReport = {
+                folio,
+                pin,
+                categoria,
+                urgencia,
+                ubicacion,
+                fecha,
+                descripcion,
+                evidencia: evidenciaData,
+                estado: "En revisión",
+                directivoAtiende: "",
+                observaciones: "El reporte fue recibido por la autoridad directiva del plantel y se encuentra en etapa de evaluación inicial.",
+                fechaCreacion
+            };
+
+            reportesData.unshift(newReport);
+            lastCreatedReport = newReport;
+
+            // Reset form
+            document.getElementById('form-reporte').reset();
+            document.getElementById('file-preview-container').classList.add('hidden');
+
+            // Set modal display keys
+            document.getElementById('created-folio').textContent = folio;
+            document.getElementById('created-pin').textContent = pin;
+
+            // Show success modal
+            document.getElementById('modal-exito-reporte').classList.remove('hidden');
+
+            // Trigger internal alerts update for directorship
+            updateAdminBadgesAndAlerts();
+
+            if (urgencia === "Peligro Inminente" || urgencia === "Urgente") {
+                showToast(`¡Alerta emitida por reporte de tipo ${urgencia}!`, 'error');
+            }
+        }
+
+        function copyFolioAndPin() {
+            if (!lastCreatedReport) return;
+            const textToCopy = `Folio Oficial: ${lastCreatedReport.folio}\nPIN Personal: ${lastCreatedReport.pin}\nSecundaria #21 Alfonso Reyes`;
+            copyToClipboard(textToCopy, 'Claves copiadas al portapapeles');
+        }
+
+        function closeSuccessModalAndNavigate() {
+            document.getElementById('modal-exito-reporte').classList.add('hidden');
+            document.getElementById('lookup-folio').value = lastCreatedReport ? lastCreatedReport.folio : '';
+            document.getElementById('lookup-pin').value = lastCreatedReport ? lastCreatedReport.pin : '';
+            navigateTo('consulta-estado');
+        }
+
+        /* OFFICIAL PDF RECEIPT GENERATION */
+        function generateOfficialPDF() {
+            if (!lastCreatedReport) return;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Header Banner
+            doc.setFillColor(105, 28, 50); // SEP Guinda
+            doc.rect(0, 0, 210, 30, 'F');
+
+            doc.setFillColor(197, 160, 89); // SEP Dorado
+            doc.rect(0, 30, 210, 3, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.text('SECUNDARIA #21 "ALFONSO REYES"', 15, 15);
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.text('COMPROBANTE OFICIAL DE DENUNCIA ANÓNIMA • SEP - SEEBC - ISEP', 15, 22);
+
+            // Document Details
+            doc.setTextColor(40, 40, 40);
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('DATOS CONFIDENCIALES DE SEGUIMIENTO', 15, 45);
+
+            doc.setLineWidth(0.5);
+            doc.setDrawColor(200, 200, 200);
+            doc.line(15, 48, 195, 48);
+
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`FOLIO ÚNICO: ${lastCreatedReport.folio}`, 15, 58);
+            doc.text(`PIN PERSONAL DE ACCESO: ${lastCreatedReport.pin}`, 15, 66);
+            doc.text(`FECHA DE REGISTRO: ${lastCreatedReport.fechaCreacion}`, 15, 74);
+
+            doc.setFont('helvetica', 'bold');
+            doc.text('RESUMEN DEL REPORTE:', 15, 88);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Categoría: ${lastCreatedReport.categoria}`, 15, 96);
+            doc.text(`Nivel de Urgencia: ${lastCreatedReport.urgencia}`, 15, 104);
+
+            // Safeguard warning box
+            doc.setFillColor(245, 245, 245);
+            doc.rect(15, 125, 180, 25, 'F');
+            doc.setFontSize(8);
+            doc.setTextColor(100, 100, 100);
+            doc.text('AVISO IMPORTANTE DE CONSERVACIÓN:', 20, 133);
+            doc.text('Guarde este archivo en un lugar seguro. Por motivos de privacidad y estricto anonimato,', 20, 139);
+            doc.text('el personal escolar no puede recuperar su PIN en caso de extravío.', 20, 144);
+
+            doc.save(`Acuse_Denuncia_${lastCreatedReport.folio}.pdf`);
+            showToast('Acuse PDF generado correctamente', 'success');
+        }
+
+        /* STATUS LOOKUP LOGIC */
+        function handleStatusLookup(event) {
+            event.preventDefault();
+            const folio = document.getElementById('lookup-folio').value.trim().toUpperCase();
+            const pin = document.getElementById('lookup-pin').value.trim();
+
+            const found = reportesData.find(r => r.folio.toUpperCase() === folio && r.pin === pin);
+
+            if (!found) {
+                showToast('Folio o PIN incorrectos. Verifique sus datos.', 'error');
+                document.getElementById('lookup-result-box').classList.add('hidden');
+                return;
+            }
+
+            // Fill details
+            document.getElementById('res-categoria').textContent = found.categoria;
+            document.getElementById('res-fecha').textContent = found.fechaCreacion;
+            document.getElementById('res-observaciones').textContent = found.observaciones || "Sin observaciones adicionales.";
+
+            // Urgency badge styling
+            const badge = document.getElementById('res-urgencia-badge');
+            badge.textContent = `Urgencia: ${found.urgencia}`;
+            if (found.urgencia === "Baja") badge.className = "inline-block mt-1 px-2.5 py-0.5 rounded text-[10px] font-black uppercase bg-green-100 text-green-800";
+            else if (found.urgencia === "Media") badge.className = "inline-block mt-1 px-2.5 py-0.5 rounded text-[10px] font-black uppercase bg-yellow-100 text-yellow-800";
+            else if (found.urgencia === "Alta") badge.className = "inline-block mt-1 px-2.5 py-0.5 rounded text-[10px] font-black uppercase bg-orange-100 text-orange-800";
+            else badge.className = "inline-block mt-1 px-2.5 py-0.5 rounded text-[10px] font-black uppercase bg-red-600 text-white animate-pulse";
+
+            // Visual Progress Timeline Calculation
+            updateVisualTimeline(found.estado);
+
+            document.getElementById('lookup-result-box').classList.remove('hidden');
+            showToast('Expediente localizado', 'success');
+        }
+
+        function updateVisualTimeline(estado) {
+            const bar = document.getElementById('timeline-progress-bar');
+            const s1 = document.getElementById('step-1-icon');
+            const s2 = document.getElementById('step-2-icon');
+            const s3 = document.getElementById('step-3-icon');
+            const s4 = document.getElementById('step-4-icon');
+
+            // Reset icons
+            [s1, s2, s3, s4].forEach(icon => {
+                icon.className = "w-9 h-9 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs border-2 border-white shadow transition-all duration-300";
+            });
+
+            // Step 1 active by default
+            s1.className = "w-9 h-9 rounded-full bg-sep-guinda text-white flex items-center justify-center font-bold text-xs border-2 border-white shadow ring-2 ring-sep-dorado";
+
+            if (estado === "En revisión") {
+                bar.style.width = "33%";
+                s2.className = "w-9 h-9 rounded-full bg-sep-guinda text-white flex items-center justify-center font-bold text-xs border-2 border-white shadow ring-2 ring-sep-dorado animate-bounce";
+            } else if (estado === "Observando") {
+                bar.style.width = "66%";
+                s2.className = "w-9 h-9 rounded-full bg-sep-guinda text-white flex items-center justify-center font-bold text-xs border-2 border-white shadow";
+                s3.className = "w-9 h-9 rounded-full bg-sep-guinda text-white flex items-center justify-center font-bold text-xs border-2 border-white shadow ring-2 ring-sep-dorado animate-bounce";
+            } else if (estado === "Atendido" || estado === "Desestimado") {
+                bar.style.width = "100%";
+                s2.className = "w-9 h-9 rounded-full bg-sep-guinda text-white flex items-center justify-center font-bold text-xs border-2 border-white shadow";
+                s3.className = "w-9 h-9 rounded-full bg-sep-guinda text-white flex items-center justify-center font-bold text-xs border-2 border-white shadow";
+                s4.className = "w-9 h-9 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-xs border-2 border-white shadow ring-2 ring-sep-dorado";
+            }
+        }
+
+        /* ADMIN AUTHENTICATION LOGIC */
+        function handleAdminLogin(event) {
+            event.preventDefault();
+            const pass = document.getElementById('admin-password-input').value;
+
+            if (pass === "13MDissael") {
+                document.getElementById('admin-auth-card').classList.add('hidden');
+                document.getElementById('admin-dashboard-content').classList.remove('hidden');
+                showToast('Acceso Directivo Autorizado', 'success');
+                renderAdminReportsTable();
+                renderAnalyticsCharts();
+            } else {
+                showToast('Clave de acceso incorrecta', 'error');
+            }
+        }
+
+        function handleAdminLogout() {
+            document.getElementById('admin-password-input').value = '';
+            document.getElementById('admin-dashboard-content').classList.add('hidden');
+            document.getElementById('admin-auth-card').classList.remove('hidden');
+            showToast('Sesión de administración cerrada', 'info');
+        }
+
+        /* ADMIN DASHBOARD TABS AND RENDERING */
+        function switchAdminTab(tabStatus) {
+            currentActiveAdminTab = tabStatus;
+
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-sep-guinda', 'text-white', 'shadow');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+
+            const activeBtn = document.getElementById(`tab-${tabStatus.replace(/\s+/g, '-')}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-sep-guinda', 'text-white', 'shadow');
+                activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+            }
+
+            renderAdminReportsTable();
+        }
+
+        function renderAdminReportsTable() {
+            const tbody = document.getElementById('admin-reports-tbody');
+            tbody.innerHTML = '';
+
+            const filtered = reportesData.filter(r => r.estado === currentActiveAdminTab);
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-6 text-center text-slate-400 italic">
+                            No hay expedientes en el apartado "${currentActiveAdminTab}".
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filtered.forEach(rep => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition";
+
+                let urgenciaStyle = "bg-slate-100 text-slate-700";
+                if (rep.urgencia === "Baja") urgenciaStyle = "bg-green-100 text-green-800 font-bold";
+                else if (rep.urgencia === "Media") urgenciaStyle = "bg-yellow-100 text-yellow-800 font-bold";
+                else if (rep.urgencia === "Alta") urgenciaStyle = "bg-orange-100 text-orange-800 font-bold";
+                else if (rep.urgencia === "Urgente" || rep.urgencia === "Peligro Inminente") urgenciaStyle = "bg-red-600 text-white font-black animate-pulse";
+
+                tr.innerHTML = `
+                    <td class="p-3">
+                        <span class="font-mono font-bold text-sep-guinda block">${rep.folio}</span>
+                        <span class="text-[10px] text-slate-500">${rep.fechaCreacion}</span>
+                    </td>
+                    <td class="p-3">
+                        <span class="font-extrabold text-slate-800 block">${rep.categoria}</span>
+                    </td>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] uppercase ${urgenciaStyle}">${rep.urgencia}</span>
+                    </td>
+                    <td class="p-3">
+                        ${rep.evidencia ? '<span class="text-xs text-blue-600 font-bold"><i class="fa-solid fa-paperclip"></i> Adjunto</span>' : '<span class="text-[10px] text-slate-400">Sin archivo</span>'}
+                    </td>
+                    <td class="p-3 text-right">
+                        <button onclick="openAdminDetailModal('${rep.folio}')" class="px-3 py-1.5 bg-slate-900 hover:bg-black text-sep-dorado rounded-lg font-bold text-xs border border-sep-dorado/40 transition">
+                            <i class="fa-solid fa-folder-open mr-1"></i> Gestionar
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* ADMIN DETAIL & EDIT MODAL */
+        function openAdminDetailModal(folio) {
+            const rep = reportesData.find(r => r.folio === folio);
+            if (!rep) return;
+
+            currentEditingFolio = folio;
+
+            document.getElementById('detail-folio-badge').textContent = rep.folio;
+            document.getElementById('detail-categoria').textContent = rep.categoria;
+            document.getElementById('detail-fecha').textContent = rep.fecha;
+            document.getElementById('detail-ubicacion').textContent = rep.ubicacion || 'No especificada';
+            document.getElementById('detail-urgencia').textContent = rep.urgencia;
+            document.getElementById('detail-estado').textContent = rep.estado;
+            document.getElementById('detail-descripcion').textContent = rep.descripcion;
+
+            // Form preset values
+            document.getElementById('edit-estado-select').value = rep.estado;
+            document.getElementById('edit-directivo-nombre').value = rep.directivoAtiende || '';
+            document.getElementById('edit-observaciones').value = rep.observaciones || '';
+
+            // Evidencia Handling
+            const evidenciaBox = document.getElementById('detail-evidencia-container');
+            const evidenciaContent = document.getElementById('detail-evidencia-content');
+            if (rep.evidencia) {
+                evidenciaContent.innerHTML = `<span class="font-mono text-xs text-slate-700 bg-white px-2 py-1 rounded border border-slate-300 inline-block"><i class="fa-solid fa-file"></i> ${rep.evidencia.name}</span>`;
+                evidenciaBox.classList.remove('hidden');
+            } else {
+                evidenciaBox.classList.add('hidden');
+            }
+
+            document.getElementById('modal-admin-detail').classList.remove('hidden');
+        }
+
+        function closeAdminDetailModal() {
+            document.getElementById('modal-admin-detail').classList.add('hidden');
+            currentEditingFolio = null;
+        }
+
+        function handleSaveCaseStatus(event) {
+            event.preventDefault();
+            if (!currentEditingFolio) return;
+
+            const rep = reportesData.find(r => r.folio === currentEditingFolio);
+            if (!rep) return;
+
+            const nuevoEstado = document.getElementById('edit-estado-select').value;
+            const directivoNombre = document.getElementById('edit-directivo-nombre').value.trim();
+            const observaciones = document.getElementById('edit-observaciones').value.trim();
+
+            // Mandatory Directorial Staff Logging
+            if (!directivoNombre) {
+                showToast('Debe ingresar el nombre del directivo que atiende', 'error');
+                return;
+            }
+
+            rep.estado = nuevoEstado;
+            rep.directivoAtiende = directivoNombre;
+            rep.observaciones = observaciones;
+
+            closeAdminDetailModal();
+            showToast(`Expediente ${rep.folio} actualizado a "${nuevoEstado}"`, 'success');
+
+            updateAdminBadgesAndAlerts();
+            renderAdminReportsTable();
+            renderAnalyticsCharts();
+        }
+
+        /* INTERNAL ALERTS & BADGES UPDATE */
+        function updateAdminBadgesAndAlerts() {
+            const revisionCount = reportesData.filter(r => r.estado === 'En revisión').length;
+            const observandoCount = reportesData.filter(r => r.estado === 'Observando').length;
+            const atendidoCount = reportesData.filter(r => r.estado === 'Atendido').length;
+            const desestimadoCount = reportesData.filter(r => r.estado === 'Desestimado').length;
+
+            document.getElementById('badge-count-revision').textContent = revisionCount;
+            document.getElementById('badge-count-observando').textContent = observandoCount;
+            document.getElementById('badge-count-atendido').textContent = atendidoCount;
+            document.getElementById('badge-count-desestimado').textContent = desestimadoCount;
+
+            // Check for unhandled Urgent / Peligro Inminente cases in 'En revisión'
+            const urgentCases = reportesData.filter(r => r.estado === 'En revisión' && (r.urgencia === 'Urgente' || r.urgencia === 'Peligro Inminente'));
+            const alertBadge = document.getElementById('badge-urgentes-count');
+            const alertTxt = document.getElementById('txt-urgentes-count');
+
+            if (urgentCases.length > 0) {
+                alertTxt.textContent = `${urgentCases.length} URGENTE(S) ACTIVA(S)`;
+                alertBadge.classList.remove('hidden');
+            } else {
+                alertBadge.classList.add('hidden');
+            }
+        }
+
+        /* ANALYTICS MODULE (CHART.JS INTEGRATION) */
+        function renderAnalyticsCharts() {
+            const total = reportesData.length;
+            const atendidos = reportesData.filter(r => r.estado === 'Atendido').length;
+            const porcentaje = total > 0 ? Math.round((atendidos / total) * 100) : 0;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-porcentaje').textContent = `${porcentaje}%`;
+
+            // Chart 1: Status
+            const statusCounts = {
+                'En revisión': reportesData.filter(r => r.estado === 'En revisión').length,
+                'Observando': reportesData.filter(r => r.estado === 'Observando').length,
+                'Atendido': reportesData.filter(r => r.estado === 'Atendido').length,
+                'Desestimado': reportesData.filter(r => r.estado === 'Desestimado').length
+            };
+
+            const ctxStatus = document.getElementById('chartStatus').getContext('2d');
+            if (chartStatusInstance) chartStatusInstance.destroy();
+            chartStatusInstance = new Chart(ctxStatus, {
+                type: 'doughnut',
+                data: {
+                    labels: ['En Revisión', 'Observando', 'Atendido', 'Desestimado'],
+                    datasets: [{
+                        data: [statusCounts['En revisión'], statusCounts['Observando'], statusCounts['Atendido'], statusCounts['Desestimado']],
+                        backgroundColor: ['#691C32', '#C5A059', '#16a34a', '#64748b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Chart 2: Categories
+            const categoriesMap = {};
+            reportesData.forEach(r => {
+                categoriesMap[r.categoria] = (categoriesMap[r.categoria] || 0) + 1;
+            });
+
+            const ctxCategory = document.getElementById('chartCategory').getContext('2d');
+            if (chartCategoryInstance) chartCategoryInstance.destroy();
+            chartCategoryInstance = new Chart(ctxCategory, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(categoriesMap).map(k => k.substring(0, 12) + '...'),
+                    datasets: [{
+                        data: Object.values(categoriesMap),
+                        backgroundColor: '#691C32'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                }
+                
+            });
+        }
+        
+    </script> <!-- FIREBASE SDK & CONFIGURACIÓN -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+
+  // Tus credenciales únicas de Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyA8GPZlZJzEWnO_KT4_MjGkZBDzU16KZ_M",
+    authDomain: "denunciaanonima21-ddc83.firebaseapp.com",
+    projectId: "denunciaanonima21-ddc83",
+    storageBucket: "denunciaanonima21-ddc83.firebasestorage.app",
+    messagingSenderId: "299596631728",
+    appId: "1:299596631728:web:f2a4914e6e3dce9b30f575",
+    measurementId: "G-NDGC31QEW2"
+  };
+
+  // Inicializar Firebase y Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Exponer las funciones globalmente para que tu página las use al enviar o cargar reportes
+  window.db = db;
+  window.collection = collection;
+  window.addDoc = addDoc;
+  window.getDocs = getDocs;
+  window.doc = doc;
+  window.updateDoc = updateDoc;
+  window.deleteDoc = deleteDoc;
+  window.onSnapshot = onSnapshot;
+
+  console.log("Firebase conectado exitosamente a Secundaria #21");
+
+  // 1. GUARDAR UN NUEVO REPORTE EN LA NUBE (FIREBASE)
+async function enviarDenunciaAlServidor(nuevoReporte) {
+    try {
+        // Guarda el reporte en una colección llamada "denuncias" en Firestore
+        const docRef = await window.addDoc(window.collection(window.db, "denuncias"), {
+            ...nuevoReporte,
+            fechaCreacion: new Date().toISOString()
+        });
+        console.log("Denuncia registrada con éxito en la nube con ID: ", docRef.id);
+        alert("¡Denuncia enviada correctamente y sincronizada!");
+    } catch (e) {
+        console.error("Error al enviar la denuncia a Firebase: ", e);
+        alert("Hubo un error al enviar el reporte. Inténtalo de nuevo.");
+    }
+}
+
+// 2. CARGAR Y ESCUCHAR LAS DENUNCIAS EN TIEMPO REAL PARA EL PANEL ADMIN
+function escucharDenunciasEnVivo() {
+    // onSnapshot detecta cualquier cambio al instante (cuando alguien denuncia desde otro celular)
+    window.onSnapshot(window.collection(window.db, "denuncias"), (snapshot) => {
+        reportesData = []; // Vacía el arreglo local actual
+        snapshot.forEach((doc) => {
+            reportesData.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        // Actualiza la tabla del panel y vuelve a renderizar las gráficas automáticamente
+        if (typeof renderizarTablaAdmin === 'function') {
+            renderizarTablaAdmin();
+        }
+        if (typeof renderAnalyticsCharts === 'function') {
+            renderAnalyticsCharts();
+        }
+        console.log("Datos actualizados desde Firestore en tiempo real.");
+    });
+}
+
+// Ejecutar la escucha en vivo al cargar la página del panel de administración
+document.addEventListener("DOMContentLoaded", () => {
+    if (window.db) {
+        escucharDenunciasEnVivo();
+    }
+});
+</script>
+</body>
+</html>
