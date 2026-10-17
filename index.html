@@ -1601,6 +1601,47 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error al guardar en Firebase: ", error);
       alert("Hubo un error al enviar el reporte. Revisa la consola.");
     }
+    // FUNCIÓN PARA CONSULTAR ESTADO DE UN REPORTE
+window.consultarEstado = async function(event) {
+  if (event) event.preventDefault();
+
+  // Obtener lo que el usuario escribió en los inputs
+  const folioInput = document.getElementById("consulta-folio") || document.querySelector('input[placeholder*="AR-"]');
+  const pinInput = document.getElementById("consulta-pin") || document.querySelector('input[type="password"]');
+
+  if (!folioInput || !pinInput) return;
+
+  // Limpiar guiones y espacios por si el usuario lo escribe con o sin guion
+  const folioBuscado = folioInput.value.trim().toUpperCase();
+  const pinBuscado = pinInput.value.trim();
+
+  try {
+    const { collection, query, where, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    
+    // Buscar en Firestore el reporte con ese Folio y PIN
+    const q = query(
+      collection(db, "reportes"),
+      where("folio", "==", folioBuscado),
+      where("pin", "==", pinBuscado)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      alert("No se encontró ningún reporte con ese Folio y PIN. Verifica los datos.");
+    } else {
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        
+        // Mostrar los datos encontrados en la pantalla
+        alert(`Status del Reporte (${data.folio}):\n\nCategoría: ${data.categoria}\nEstado actual: ${data.estado}\nUrgencia: ${data.urgencia}`);
+      });
+    }
+  } catch (error) {
+    console.error("Error al consultar: ", error);
+    alert("Hubo un error al realizar la consulta.");
+  }
+};
   };
 </script>
 </body>
